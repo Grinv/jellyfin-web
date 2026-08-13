@@ -2,6 +2,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
 import type { ApiClient } from 'jellyfin-apiclient';
+import { subDays } from 'date-fns';
 
 import { getNextUpQuery } from 'apps/legacy/features/libraries/api/useNextUp';
 import cardBuilder from 'components/cardbuilder/cardBuilder';
@@ -23,8 +24,7 @@ function getNextUpFetchFn(
 ) {
     return function () {
         const api = ServerConnections.getApi(apiClient.serverId());
-        const oldestDateForNextUp = new Date();
-        oldestDateForNextUp.setDate(oldestDateForNextUp.getDate() - userSettings.maxDaysForNextUp());
+        const oldestDateForNextUp = subDays(new Date(), userSettings.maxDaysForNextUp());
         return queryClient
             .fetchQuery(getNextUpQuery(api, {
                 userId: apiClient.getCurrentUserId(),
